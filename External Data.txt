@@ -1,0 +1,77 @@
+		E X T E R N A L   T A B L E
+-----------------------------------------------------------------------
+
+		STEP-1: Enter into SYS user
+                ------
+			SQL> conn sys/sys123@orcl as sysdba
+			SQL> desc dba_directories;
+
+		STEP-2: Line Formatting (Optional) 
+		-------
+			 COL DIRECTORY_NAME FOR A15
+			 COL OWNER FOR A10
+			 DIRECTORY_PATH FOR A80
+			 SET LINE 200
+
+		STEP-3: Set Directory
+		-------
+			 Create or replace directory dba150_DIR1
+			 as '/home/oracle/Desktop/datapump';
+
+		STEP-4: Give Permission
+		-------
+			SQL> grant read,write on directory dba150_DIR1 to hr;
+
+		STEP-5: Enter into HR user
+		-------
+			SQL> conn hr/hr@orcl
+
+			CREATE TABLE external_table1 (
+  			  country_code      VARCHAR2(5),
+                          country_name      VARCHAR2(50),
+                          country_language  VARCHAR2(50)
+			)
+			ORGANIZATION EXTERNAL (
+  			  TYPE ORACLE_LOADER
+  			  DEFAULT DIRECTORY dba150_DIR1
+                          ACCESS PARAMETERS (
+                            RECORDS DELIMITED BY NEWLINE
+                            FIELDS TERMINATED BY ','
+                            MISSING FIELD VALUES ARE NULL
+                            (
+                               country_code      CHAR(5),
+                               country_name      CHAR(50),
+                               country_language  CHAR(50)
+                            )
+                          )
+                          LOCATION ('data.txt')
+                       )
+                       PARALLEL 5
+                       REJECT LIMIT UNLIMITED;	
+		
+		STEP-6: See all data
+		------
+			SQL> select *
+			from   external_table1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
